@@ -15,13 +15,16 @@ def text_cleansing(text):
 def load_alay_dictionary():
     alay_csv_file = "csv_data/alay.csv"
     df_alay = pd.read_csv(alay_csv_file, delimiter="\t")
-    alay_dict = dict(zip(df_alay['alay_word'], df_alay['formal_word']))
+    if 'alay_word' in df_alay.columns:
+        alay_dict = dict(zip(df_alay['alay_word'], df_alay['formal_word']))
+    else:
+        alay_dict = dict(zip(df_alay['alay'], df_alay['baku']))
     return alay_dict
 
 def load_abusive_dictionary():
     abusive_csv_file = "csv_data/abusive.csv"
     df_abusive = pd.read_csv(abusive_csv_file)
-    abusive_dict = set(df_abusive['word'])
+    abusive_dict = set(df_abusive['ABUSIVE'])
     return abusive_dict
 
 def clean_with_alay(text):
