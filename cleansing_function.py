@@ -2,6 +2,8 @@ import re
 import pandas as pd
 
 def text_cleansing(text):
+    if not isinstance(text, (str, bytes)):
+        return text  # Return input as-is if it's not a string or bytes-like object
     # Bersihkan tanda baca (selain huruf dan angka)
     clean_text = re.sub(r'[^a-zA-Z0-9\s]', '', text)
     # Konversi ke lowercase
@@ -44,18 +46,13 @@ def clean_with_abusive(text):
     return text
 
 def cleansing_files(file_upload):
-    # Read csv file upload, jika error dengan metode biasa, gunakan encoding latin-1
-    try:
-        df_upload = pd.read_csv(file_upload)
-    except:
-        df_upload = pd.read_csv(file_upload, encoding="latin-1")
-    print("Read dataframe from Upload success!")
-    # Ambil hanya kolom pertama saja 
-    df_upload = pd.DataFrame(df_upload.iloc[:,0])
-    # Rename kolom menjadi "raw_text"
+    # Read csv file upload, if there's an error with the default method, use encoding 'latin-1'
+    # Take only the first column
+    df_upload = pd.DataFrame(file_upload.iloc[:,0])
+    # Rename the column to "raw_text"
     df_upload.columns = ["raw_text"]
-    # Bersihkan text menggunakan fungsi text_cleansing
-    # Simpan di kolom "clean_text"
+    # Cleanse the text using the text_cleansing function
+    # Store the results in the "clean_text" column
     df_upload["clean_text"] = df_upload["raw_text"].apply(text_cleansing)
     print("Cleansing text success!")
     return df_upload
