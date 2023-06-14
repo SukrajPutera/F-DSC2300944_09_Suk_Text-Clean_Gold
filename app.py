@@ -88,12 +88,18 @@ def cleansing_upload():
     # Get file from upload to dataframe
     uploaded_file = request.files['upload_file']
     # Read csv file to dataframe then cleansing
-    df_cleansing = cleansing_files(uploaded_file)
+    # try:
+    #     df_upload = pd.read_csv(uploaded_file)
+    # except:
+    df_upload = pd.read_csv(uploaded_file, encoding="latin-1").head()
+    print("Read dataframe from Upload success!")
+    df_cleansing = cleansing_files(df_upload)
     # Upload result to database
     db_connection = create_connection()
     insert_upload_result_to_db(db_connection, df_cleansing)
     print("Upload result to database success!")
-    result_response = {str(key): value for key, value in df_cleansing.T.to_dict().items()}
+    # Convert DataFrame to list of dictionaries
+    result_response = df_cleansing.to_dict(orient='records')
     return jsonify(result_response)
 
 if __name__ == '__main__':
