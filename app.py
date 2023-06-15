@@ -3,6 +3,7 @@ Flask API Application
 """
 from flask import Flask, jsonify, request
 import pandas as pd
+from time import perf_counter
 from flasgger import Swagger, swag_from, LazyString, LazyJSONEncoder
 from db import (
     create_connection, insert_dictionary_to_db, 
@@ -74,8 +75,12 @@ def cleansing_form():
     # Get text from input user
     raw_text = request.form["raw_text"]
     # Cleansing text
+    start = perf_counter()
     clean_text = text_cleansing(raw_text)
-    result_response = {"raw_text": raw_text, "clean_text": clean_text}
+    end = perf_counter()
+    time_elapse = end-start
+    print(f'processing time: {time_elapse} second')
+    result_response = {"raw_text": raw_text, "clean_text": clean_text, "processing time": time_elapse}
     # Insert result to database
     db_connection = create_connection()
     insert_result_to_db(db_connection, raw_text, clean_text)
