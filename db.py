@@ -12,6 +12,12 @@ def create_connection():
     conn = sqlite3.connect('gold_challenge.db')
     return conn
 
+def get_abusive_data(conn):
+    # Retrieve abusive data from the database
+    query = "SELECT word FROM abusive"
+    df = pd.read_sql_query(query, conn)
+    return df
+
 def insert_dictionary_to_db(conn):
     abusive_csv_file = "csv_data/abusive.csv"
     alay_csv_file = "csv_data/alay.csv"
