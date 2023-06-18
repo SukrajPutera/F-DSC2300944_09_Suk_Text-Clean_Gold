@@ -96,7 +96,7 @@ def cleansing_upload():
     # try:
     #     df_upload = pd.read_csv(uploaded_file)
     # except:
-    df_upload = pd.read_csv(uploaded_file, encoding="latin-1").head()
+    df_upload = pd.read_csv(uploaded_file, encoding="latin-1")
     print("Read dataframe from Upload success!")
     df_cleansing = cleansing_files(df_upload)
     # Upload result to database
