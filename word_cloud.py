@@ -3,9 +3,7 @@ nltk.download('stopwords')
 nltk.download('punkt')
 import pandas as pd
 import matplotlib.pyplot as plt
-import re
 from wordcloud import WordCloud
-from nltk.corpus import stopwords as nltk_stopwords
 from nltk.tokenize import word_tokenize
 
 def generate_word_cloud_from_csv(csv_file, abusive_file, alay_file):
@@ -14,21 +12,20 @@ def generate_word_cloud_from_csv(csv_file, abusive_file, alay_file):
     
     # Read the abusive words CSV file
     abusive_df = pd.read_csv(abusive_file, delimiter='\t')
-    abusive_words = abusive_df['ABUSIVE'].values.tolist()
+    abusive_words = set(abusive_df['ABUSIVE'].values.tolist())
 
     # Read the alay words CSV file
     alay_df = pd.read_csv(alay_file, delimiter='\t')
-    alay_words = alay_df['alay'].values.tolist()
+    alay_words = set(alay_df['alay'].values.tolist())
 
     # Concatenate all text columns into a single string
     text = df.apply(lambda row: ' '.join(row.values.astype(str)), axis=1).str.cat(sep=' ')
 
-    # Preprocess the text
-    text = text.lower()  # Convert to lowercase
-    text = re.sub(r'[^\w\s]', '', text)  # Remove punctuation
-    stop_words = set(nltk_stopwords.words('indonesian'))  # Get Indonesian stopwords
-    word_tokens = word_tokenize(text)  # Tokenize the text
-    filtered_text = [word for word in word_tokens if word not in stop_words and word not in abusive_words and word not in alay_words]  # Remove stopwords, abusive words, and alay words
+    # Tokenize the text
+    word_tokens = word_tokenize(text)
+
+    # Filter the tokens based on abusive and alay words
+    filtered_text = [word for word in word_tokens if word in abusive_words or word in alay_words]
 
     # Join the filtered words back into a single string
     filtered_text = ' '.join(filtered_text)
